@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой День - Приложение для здоровья</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Главный экран (Dashboard) -->
+    <div id="dashboard" class="screen active">
+        <header class="header">
+            <h1>Мой День</h1>
+            <div class="date">{{currentDate}}</div>
+        </header>
+        
+        <main class="dashboard-grid">
+            <!-- Карточка Сон -->
+            <div class="card sleep-card" onclick="navigateTo('sleep')">
+                <div class="card-icon">😴</div>
+                <div class="card-content">
+                    <h3>Сон</h3>
+                    <p id="sleep-hours">{{sleepHours}} часов</p>
+                </div>
+                <i class="fas fa-chevron-right"></i>
+            </div>
+
+            <!-- Карточка Вода -->
+            <div class="card water-card" onclick="navigateTo('water')">
+                <div class="card-icon">💧</div>
+                <div class="card-content">
+                    <h3>Вода</h3>
+                    <p id="water-amount">{{waterAmount}} мл</p>
+                </div>
+                <i class="fas fa-chevron-right"></i>
+            </div>
+
+            <!-- Карточка Шаги -->
+            <div class="card steps-card" onclick="navigateTo('steps')">
+                <div class="card-icon">👟</div>
+                <div class="card-content">
+                    <h3>Шаги</h3>
+                    <p id="steps-count">{{stepsCount}} шагов</p>
+                </div>
+                <i class="fas fa-chevron-right"></i>
+            </div>
+
+            <!-- Карточка Настроение -->
+            <div class="card mood-card" onclick="navigateTo('mood')">
+                <div class="card-icon">😊</div>
+                <div class="card-content">
+                    <h3>Настроение</h3>
+                    <p id="mood-status">{{moodStatus}}</p>
+                </div>
+                <i class="fas fa-chevron-right"></i>
+            </div>
+
+            <!-- Карточка Лекарства -->
+            <div class="card medicine-card" onclick="navigateTo('medicine')">
+                <div class="card-icon">💊</div>
+                <div class="card-content">
+                    <h3>Лекарства</h3>
+                    <p id="medicine-count">{{medicineCount}} активных</p>
+                </div>
+                <i class="fas fa-chevron-right"></i>
+            </div>
+        </main>
+
+        <nav class="bottom-nav">
+            <button class="nav-btn active" onclick="showScreen('dashboard')">
+                <i class="fas fa-home"></i>
+                <span>Главная</span>
+            </button>
+            <button class="nav-btn" onclick="showScreen('statistics')">
+                <i class="fas fa-chart-bar"></i>
+                <span>Статистика</span>
+            </button>
+            <button class="nav-btn" onclick="showScreen('profile')">
+                <i class="fas fa-user"></i>
+                <span>Профиль</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Экран Сон -->
+    <div id="sleep-screen" class="screen">
+        <header class="header">
+            <button class="back-btn" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h2>Сон</h2>
+        </header>
+        
+        <main class="screen-content">
+            <div class="data-history">
+                <h3>История сна</h3>
+                <div id="sleep-history" class="history-list"></div>
+            </div>
+            
+            <button class="add-btn" onclick="showAddForm('sleep')">
+                <i class="fas fa-plus"></i> Добавить сон
+            </button>
+            
+            <div id="sleep-form" class="add-form hidden">
+                <h4>Добавить данные о сне</h4>
+                <input type="number" id="sleep-input" placeholder="Часы сна" min="0" max="24">
+                <div class="form-buttons">
+                    <button onclick="saveData('sleep')" class="save-btn">Сохранить</button>
+                    <button onclick="hideAddForm('sleep')" class="cancel-btn">Отмена</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Экран Вода -->
+    <div id="water-screen" class="screen">
+        <header class="header">
+            <button class="back-btn" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h2>Вода</h2>
+        </header>
+        
+        <main class="screen-content">
+            <div class="water-progress">
+                <div class="progress-circle">
+                    <span id="water-percentage">0%</span>
+                </div>
+                <p>Дневная норма: 2000 мл</p>
+            </div>
+            
+            <div class="quick-add">
+                <h3>Быстрое добавление</h3>
+                <div class="water-buttons">
+                    <button onclick="addWater(100)" class="water-btn">100 мл</button>
+                    <button onclick="addWater(250)" class="water-btn">250 мл</button>
+                    <button onclick="addWater(500)" class="water-btn">500 мл</button>
+                </div>
+            </div>
+            
+            <div id="water-history" class="history-list"></div>
+            
+            <button class="add-btn" onclick="showAddForm('water')">
+                <i class="fas fa-plus"></i> Добавить воду
+            </button>
+            
+            <div id="water-form" class="add-form hidden">
+                <h4>Добавить объем воды</h4>
+                <input type="number" id="water-input" placeholder="Объем (мл)" min="0">
+                <div class="form-buttons">
+                    <button onclick="saveData('water')" class="save-btn">Сохранить</button>
+                    <button onclick="hideAddForm('water')" class="cancel-btn">Отмена</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Экран Шаги -->
+    <div id="steps-screen" class="screen">
+        <header class="header">
+            <button class="back-btn" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h2>Шаги</h2>
+        </header>
+        
+        <main class="screen-content">
+            <div class="steps-today">
+                <h3>Сегодня</h3>
+                <div class="steps-count-large" id="current-steps">0</div>
+                <p>шагов</p>
+            </div>
+            
+            <div id="steps-history" class="history-list"></div>
+            
+            <button class="add-btn" onclick="showAddForm('steps')">
+                <i class="fas fa-plus"></i> Добавить шаги
+            </button>
+            
+            <div id="steps-form" class="add-form hidden">
+                <h4>Добавить количество шагов</h4>
+                <input type="number" id="steps-input" placeholder="Количество шагов" min="0">
+                <div class="form-buttons">
+                    <button onclick="saveData('steps')" class="save-btn">Сохранить</button>
+                    <button onclick="hideAddForm('steps')" class="cancel-btn">Отмена</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Экран Настроение -->
+    <div id="mood-screen" class="screen">
+        <header class="header">
+            <button class="back-btn" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h2>Настроение</h2>
+        </header>
+        
+        <main class="screen-content">
+            <h3>Как вы себя чувствуете?</h3>
+            <div class="mood-selector">
+                <button onclick="selectMood('😊', 'Отлично')" class="mood-emoji">😊</button>
+                <button onclick="selectMood('😐', 'Нормально')" class="mood-emoji">😐</button>
+                <button onclick="selectMood('😢', 'Грустно')" class="mood-emoji">😢</button>
+            </div>
+            <div id="mood-history" class="history-list"></div>
+        </main>
+    </div>
+
+    <!-- Экран Лекарства -->
+    <div id="medicine-screen" class="screen">
+        <header class="header">
+            <button class="back-btn" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h2>Лекарства</h2>
+        </header>
+        
+        <main class="screen-content">
+            <div id="medicine-list" class="medicine-list"></div>
+            
+            <button class="add-btn" onclick="showAddForm('medicine')">
+                <i class="fas fa-plus"></i> Добавить лекарство
+            </button>
+            
+            <div id="medicine-form" class="add-form hidden">
+                <h4>Добавить лекарство</h4>
+                <input type="text" id="medicine-name" placeholder="Название лекарства">
+                <input type="time" id="medicine-time" placeholder="Время приема">
+                <div class="form-buttons">
+                    <button onclick="saveData('medicine')" class="save-btn">Сохранить</button>
+                    <button onclick="hideAddForm('medicine')" class="cancel-btn">Отмена</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Экран Статистика -->
+    <div id="statistics-screen" class="screen">
+        <header class="header">
+            <h2>Статистика</h2>
+        </header>
+        
+        <main class="screen-content">
+            <div class="stats-categories">
+                <button onclick="showStats('sleep')" class="stats-btn">Сон</button>
+                <button onclick="showStats('water')" class="stats-btn">Вода</button>
+                <button onclick="showStats('steps')" class="stats-btn">Шаги</button>
+                <button onclick="showStats('mood')" class="stats-btn">Настроение</button>
+                <button onclick="showStats('medicine')" class="stats-btn">Лекарства</button>
+            </div>
+            <div id="stats-display" class="stats-display">
+                <p>Выберите категорию для просмотра статистики</p>
+            </div>
+        </main>
+        
+        <nav class="bottom-nav">
+            <button class="nav-btn" onclick="showScreen('dashboard')">
+                <i class="fas fa-home"></i>
+                <span>Главная</span>
+            </button>
+            <button class="nav-btn active" onclick="showScreen('statistics')">
+                <i class="fas fa-chart-bar"></i>
+                <span>Статистика</span>
+            </button>
+            <button class="nav-btn" onclick="showScreen('profile')">
+                <i class="fas fa-user"></i>
+                <span>Профиль</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Экран Профиль -->
+    <div id="profile-screen" class="screen">
+        <header class="header">
+            <h2>Профиль</h2>
+        </header>
+        
+        <main class="screen-content">
+            <div class="profile-info">
+                <div class="profile-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <h3 id="profile-name">Пользователь</h3>
+            </div>
+            
+            <div class="profile-settings">
+                <div class="setting-item">
+                    <label>Имя</label>
+                    <input type="text" id="name-input" placeholder="Введите имя">
+                </div>
+                <button onclick="saveProfile()" class="save-btn">Сохранить изменения</button>
+            </div>
+            
+            <div class="app-info">
+                <h4>О приложении</h4>
+                <p>Мой День v1.0</p>
+                <p>Приложение для отслеживания здоровья</p>
+            </div>
+        </main>
+        
+        <nav class="bottom-nav">
+            <button class="nav-btn" onclick="showScreen('dashboard')">
+                <i class="fas fa-home"></i>
+                <span>Главная</span>
+            </button>
+            <button class="nav-btn" onclick="showScreen('statistics')">
+                <i class="fas fa-chart-bar"></i>
+                <span>Статистика</span>
+            </button>
+            <button class="nav-btn active" onclick="showScreen('profile')">
+                <i class="fas fa-user"></i>
+                <span>Профиль</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Всплывающее окно подтверждения -->
+    <div id="notification" class="notification hidden">
+        <p id="notification-message">Добавлено!</p>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
